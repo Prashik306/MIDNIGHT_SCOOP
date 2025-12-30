@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Midnight Scoop – Dark Dessert Lab</title>
+
+  <style>
+    :root {
+      --bg: #050608;
+      --card: #151824;
+      --accent: #00ffe0;
+      --accent-soft: rgba(0, 255, 224, 0.12);
+      --text-main: #f9fafb;
+      --text-muted: #a0a5b8;
+      --danger: #ff4b81;
+      --radius-card: 26px;
+      --shadow-soft: 0 24px 70px rgba(0, 0, 0, 0.9);
+      --transition-fast: 0.18s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { scroll-behavior: smooth; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #151827 0, #050608 50%, #020308 100%);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    img, video { max-width: 100%; display: block; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(22px);
+      background: linear-gradient(to bottom, rgba(5,6,12,0.98), rgba(5,6,12,0.9));
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.8rem 0;
+    }
+    .logo { display: flex; align-items: center; gap: 0.55rem; }
+    .logo-mark {
+      width: 34px; height: 34px; border-radius: 12px;
+      background: radial-gradient(circle at 20% 0%, #ffffff 0, #48ffe0 22%, #161926 62%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 18px rgba(0,255,224,0.6);
+      font-size: 1.3rem;
+      animation: pulse 2.2s infinite alternate;
+    }
+    .logo span {
+      font-weight: 700; letter-spacing: 0.12em; font-size: 0.86rem;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex; gap: 1.5rem; font-size: 0.86rem;
+      text-transform: uppercase; letter-spacing: 0.18em;
+    }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; position: relative;
+    }
+    .nav-links a::after {
+      content: ""; position: absolute; left: 0; bottom: -3px;
+      width: 0; height: 2px; background: var(--accent);
+      transition: width var(--transition-fast);
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .btn-primary, .btn-ghost, .btn-cart {
+      border-radius: 999px; padding: 0.75rem 1.35rem;
+      font-size: 0.83rem; border: none; cursor: pointer;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      transition: all var(--transition-fast); white-space: nowrap;
+    }
+    .btn-primary {
+      background: radial-gradient(circle at 0 0,#ffffff 0,#00ffe0 35%,#00a09b 65%,#007f94 100%);
+      color: #020308; box-shadow: 0 14px 40px rgba(0,255,224,0.5);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::after {
+      content:""; position:absolute; top:0; left:-40%; width:40%; height:100%;
+      background:linear-gradient(120deg,rgba(255,255,255,0.6),transparent);
+      transform:skewX(-20deg) translateX(0); opacity:0;
+      transition:transform 0.45s ease, opacity 0.3s ease;
+    }
+    .btn-primary:hover { transform:translateY(-1px) scale(1.01); box-shadow:0 18px 60px rgba(0,255,224,0.7); }
+    .btn-primary:hover::after { transform:skewX(-20deg) translateX(180%); opacity:1; }
+
+    .btn-ghost {
+      background: transparent; border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-main);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.05); }
+
+    .btn-cart {
+      padding: 0.5rem 0.9rem;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(0,255,224,0.5);
+      color: var(--accent);
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.78rem;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 90vh;
+      display:flex; align-items:center; padding:2.75rem 0 3rem;
+      overflow:hidden;
+    }
+    .hero-bg-video { position:absolute; inset:0; overflow:hidden; z-index:-2; }
+    .hero-bg-video video {
+      width:100%; height:100%; object-fit:cover;
+      filter:saturate(1.1) contrast(1.05) brightness(0.9);
+      opacity:0.8;
+    }
+    .hero-inner {
+      display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);
+      gap:2.8rem; align-items:center;
+    }
+    .hero-pill {
+      display:inline-flex; align-items:center; gap:0.7rem;
+      padding:0.3rem 0.6rem; border-radius:999px;
+      background:rgba(3,7,18,0.8); border:1px solid rgba(255,255,255,0.12);
+      font-size:0.74rem; letter-spacing:0.18em; text-transform:uppercase;
+      color:var(--text-muted); margin-bottom:0.9rem;
+    }
+    .hero-pill span { color:var(--accent); font-weight:600; }
+    .hero-title {
+      font-size:clamp(2.5rem,4vw,3.5rem); line-height:1.02;
+      letter-spacing:-0.04em; margin-bottom:0.6rem;
+    }
+    .hero-title span { color:var(--accent); text-shadow:0 0 24px rgba(0,255,224,0.6); }
+    .hero-subtitle {
+      font-size:0.98rem; color:var(--text-muted);
+      max-width:32rem; margin-bottom:1.3rem;
+    }
+    .hero-cta-row {
+      display:flex; flex-wrap:wrap; gap:0.9rem;
+      align-items:center; margin-top:0.7rem;
+    }
+
+    /* SECTIONS */
+    section { padding:2.6rem 0; }
+    .section-header { text-align:center; margin-bottom:1.8rem; }
+    .section-eyebrow {
+      font-size:0.78rem; letter-spacing:0.16em; text-transform:uppercase;
+      color:var(--text-muted); margin-bottom:0.2rem;
+    }
+    .section-title { font-size:1.6rem; letter-spacing:-0.02em; }
+    .section-sub {
+      margin-top:0.35rem; font-size:0.9rem; color:var(--text-muted);
+      max-width:33rem; margin-inline:auto;
+    }
+
+    /* FLAVOURS */
+    .flavours-section {
+      background: radial-gradient(circle at top, #151827 0, #050608 55%, #020308 100%);
+    }
+    .flavours-grid {
+      display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:1.4rem;
+    }
+    .flavour-card {
+      background:radial-gradient(circle at top,#1a1d2c 0,#0a0c13 65%,#06070b 100%);
+      border-radius:var(--radius-card); padding:1.15rem 1.1rem;
+      border:1px solid rgba(255,255,255,0.10);
+      box-shadow:0 18px 40px rgba(0,0,0,0.7);
+      display:flex; flex-direction:column; justify-content:space-between;
+      min-height:260px; position:relative; overflow:hidden;
+      transition:transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .flavour-card:hover {
+      transform:translateY(-8px);
+      box-shadow:0 26px 70px rgba(0,0,0,0.95);
+      border-color:rgba(0,255,224,0.4);
+    }
+    .flavour-tag {
+      font-size:0.76rem; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:0.11em;
+    }
+    .flavour-name { font-size:1.02rem; font-weight:700; margin:0.15rem 0; }
+    .flavour-name span { color:var(--accent); }
+    .flavour-desc { font-size:0.86rem; color:var(--text-muted); margin-bottom:0.4rem; }
+    .flavour-meta { font-size:0.8rem; color:var(--text-muted); margin-bottom:0.6rem; }
+    .flavour-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      gap:0.5rem; margin-top:auto;
+    }
+    .flavour-price { font-weight:700; font-size:0.96rem; }
+
+    .btn-add {
+      font-size:0.78rem; padding:0.45rem 0.9rem;
+      border-radius:999px; border:1px solid rgba(0,255,224,0.55);
+      background:var(--accent-soft); color:var(--accent);
+      cursor:pointer; transition:background var(--transition-fast), transform var(--transition-fast);
+    }
+    .btn-add:hover { background:rgba(0,255,224,0.18); transform:translateY(-1px); }
+
+    .btn-buy-small {
+      font-size:0.78rem; padding:0.45rem 0.9rem;
+      border-radius:999px; border:1px solid rgba(255,255,255,0.4);
+      background:transparent; color:var(--text-main);
+      cursor:pointer; transition:background var(--transition-fast), transform var(--transition-fast);
+    }
+    .btn-buy-small:hover { background:rgba(255,255,255,0.06); transform:translateY(-1px); }
+
+    .story-video-wrap {
+      position:relative; border-radius:20px; overflow:hidden;
+      box-shadow:var(--shadow-soft); border:1px solid rgba(0,255,224,0.2);
+    }
+    .story-video-wrap video { width:100%; height:100%; object-fit:cover; }
+
+    /* DELIVERY FORM */
+    .order-form {
+      max-width: 540px;
+      margin: 0 auto;
+      background: rgba(3,7,18,0.9);
+      border-radius: 22px;
+      padding: 1.4rem 1.3rem 1.6rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow-soft);
+    }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0.85rem;
+      font-size: 0.86rem;
+    }
+    .form-row label { margin-bottom: 0.25rem; color: var(--text-muted); }
+    .order-form input,
+    .order-form textarea,
+    .order-form select {
+      padding: 0.55rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(10,12,20,0.9);
+      color: var(--text-main);
+      font-size: 0.86rem;
+    }
+    .order-form textarea { min-height: 70px; resize: vertical; }
+
+    /* FLOATING CART */
+    .cart-panel {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      width: 340px;
+      max-width: calc(100% - 2rem);
+      background: rgba(5,7,15,0.98);
+      border-radius: 18px;
+      border: 1px solid rgba(0,255,224,0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+      padding: 0.9rem 0.9rem 1rem;
+      font-size: 0.86rem;
+      z-index: 50;
+      display: none;
+    }
+    .cart-header {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:0.4rem;
+    }
+    .cart-items {
+      max-height: 190px;
+      overflow-y: auto;
+      padding-right:0.3rem;
+      margin-bottom:0.5rem;
+    }
+    .cart-line {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:0.35rem;
+    }
+    .cart-total {
+      display:flex; justify-content:space-between; align-items:center;
+      margin:0.4rem 0 0.6rem;
+      font-size:0.9rem;
+    }
+
+    .cart-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 0.45rem;
+    }
+    .cart-clear,
+    .cart-buy {
+      padding: 0.6rem 0.7rem;
+      border-radius: 14px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
+    }
+    .cart-clear {
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at top, #0f172a 0, #020617 80%);
+      color: #e5e7eb;
+    }
+    .cart-clear:hover {
+      background: radial-gradient(circle at top, #1f2937 0, #020617 85%);
+      border-color: rgba(148, 163, 184, 0.95);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+    }
+    .cart-buy {
+      border: none;
+      background: radial-gradient(circle at 0 0, #ffffff 0, #00ffe0 40%, #00a3b4 80%);
+      color: #020617;
+      font-weight: 600;
+      box-shadow: 0 14px 40px rgba(0, 255, 224, 0.65);
+    }
+    .cart-buy:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 255, 224, 0.85);
+    }
+    .cart-buy:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 30px rgba(0, 255, 224, 0.55);
+    }
+
+    .cart-note {
+      margin-top:0.3rem;
+      font-size:0.76rem;
+      color:var(--text-muted);
+    }
+
+    footer {
+      padding:1.8rem 0 2.3rem; text-align:center;
+      font-size:0.8rem; color:var(--text-muted);
+    }
+
+    @keyframes pulse {
+      from { box-shadow:0 0 10px rgba(0,255,224,0.4); transform:scale(1); }
+      to { box-shadow:0 0 26px rgba(0,255,224,0.9); transform:scale(1.06); }
+    }
+
+    @media (max-width:900px){
+      .nav-links{display:none;}
+      .hero-inner{grid-template-columns:minmax(0,1fr);}
+      .flavours-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media (max-width:640px){
+      .hero{min-height:auto;padding-top:2.2rem;}
+      .flavours-grid{grid-template-columns:minmax(0,1fr);}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="logo">
+      <div class="logo-mark">🍦</div>
+      <span>MIDNIGHT SCOOP</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#flavours">Flavours</a>
+      <a href="#details">Details</a>
+    </nav>
+    <button class="btn-cart" id="cartToggle">
+      Cart <span id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-video" aria-hidden="true">
+      <video src="1.mp4" autoplay muted loop playsinline></video>
+    </div>
+
+    <div class="container hero-inner">
+      <div>
+        <div class="hero-pill">
+          Jalna • Small batch <span>Night‑only drops</span>
+        </div>
+        <h1 class="hero-title">
+          Scoop the <span>darkest</span> chocolate nights in town.
+        </h1>
+        <p class="hero-subtitle">
+          Ultra‑creamy small‑batch shakes, cones and sundaes made to look cinematic on Reels
+          and taste like serious dessert.
+        </p>
+
+        <div class="hero-cta-row">
+          <button class="btn-ghost" onclick="scrollToFlavours()">View menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLAVOURS -->
+  <section id="flavours" class="flavours-section">
+    <div class="container">
+      <header class="section-header">
+        <div class="section-eyebrow">Flavours</div>
+        <h2 class="section-title">Watch every dessert in action</h2>
+        <p class="section-sub">
+          Real clips of Midnight Scoop products – what you see here is exactly what reaches your table.
+        </p>
+      </header>
+
+      <div class="flavours-grid">
+        <!-- 1 Royal Cocoa Shake -->
+        <article class="flavour-card" data-id="royal">
+          <div class="story-video-wrap" style="margin-bottom:0.9rem;">
+            <video src="1.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div>
+            <div class="flavour-tag">Signature shake</div>
+            <h3 class="flavour-name">Royal <span>Cocoa Shake</span></h3>
+            <p class="flavour-desc">
+              Ultra‑creamy Belgian‑style chocolate shake crowned with whipped cream
+              and thick cocoa drizzle.
+            </p>
+            <div class="flavour-meta">
+              <span>🥤 500 ml cup</span>
+              <span>≈ 420–460 kcal • 8–10 g protein</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹259</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('royal');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('royal');return false;">Add Royal Cocoa Shake</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2 Chocolate Velvet -->
+        <article class="flavour-card" data-id="velvet">
+          <div class="story-video-wrap">
+            <video src="2.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Smooth classic</div>
+            <h3 class="flavour-name">Chocolate <span>Velvet</span></h3>
+            <p class="flavour-desc">
+              Silky milk‑chocolate shake with soft cream swirl and light dark‑chocolate drizzle – easy to sip.
+            </p>
+            <div class="flavour-meta">
+              <span>🥤 350–400 ml cup</span>
+              <span>≈ 340–380 kcal • 7–9 g protein</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹229</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('velvet');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('velvet');return false;">Add Chocolate Velvet</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3 Triple Cocoa Bliss -->
+        <article class="flavour-card" data-id="bliss">
+          <div class="story-video-wrap">
+            <video src="3.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Layered dessert</div>
+            <h3 class="flavour-name">Triple <span>Cocoa Bliss</span></h3>
+            <p class="flavour-desc">
+              Three chocolate layers – shake base, fudge centre and brownie top – in one heavy dessert cup.
+            </p>
+            <div class="flavour-meta">
+              <span>🍨 400–450 ml cup</span>
+              <span>≈ 480–520 kcal • 9–11 g protein</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹289</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('bliss');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('bliss');return false;">Add Triple Cocoa Bliss</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4 Cocoa Overload -->
+        <article class="flavour-card" data-id="overload">
+          <div class="story-video-wrap">
+            <video src="4.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Heavy chocolate</div>
+            <h3 class="flavour-name">Cocoa <span>Overload</span></h3>
+            <p class="flavour-desc">
+              Dark‑chocolate ice cream flooded with fudge rivers and brownie chunks for maximum cocoa hit.
+            </p>
+            <div class="flavour-meta">
+              <span>🍨 350–400 ml tub</span>
+              <span>≈ 380–420 kcal • 6–8 g protein</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹249</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('overload');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('overload');return false;">Add Cocoa Overload</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5 Chocolate Velvet Pour -->
+        <article class="flavour-card" data-id="velvet-pour">
+          <div class="story-video-wrap">
+            <video src="5.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Pour shot</div>
+            <h3 class="flavour-name">Chocolate <span>Velvet</span> Pour</h3>
+            <p class="flavour-desc">
+              Slow‑motion pour of our Chocolate Velvet shake – the clip that makes people instantly thirsty.
+            </p>
+            <div class="flavour-meta">
+              <span>🎥 Promo video</span>
+              <span>Pairs with Chocolate Velvet • ₹229</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹229</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('velvet-pour');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('velvet-pour');return false;">Add Velvet Pour</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6 Black Velvet Swirl -->
+        <article class="flavour-card" data-id="black">
+          <div class="story-video-wrap">
+            <video src="6.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Signature cone</div>
+            <h3 class="flavour-name">Black <span>Velvet Swirl</span></h3>
+            <p class="flavour-desc">
+              Charcoal waffle cone with mint & dark‑cocoa soft serve, cookie rubble and glossy chocolate drizzle.
+            </p>
+            <div class="flavour-meta">
+              <span>🍦 Waffle cone</span>
+              <span>≈ 260–290 kcal • 4–5 g protein</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹189</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('black');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('black');return false;">Add Black Velvet</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 7 Triple Cocoa Melt -->
+        <article class="flavour-card" data-id="melt">
+          <div class="story-video-wrap">
+            <video src="7.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Stacked dessert</div>
+            <h3 class="flavour-name">Triple <span>Cocoa Melt</span></h3>
+            <p class="flavour-desc">
+              Triple stack of mini doughnuts drenched in chocolate and cream, finished with hot cocoa drizzle.
+            </p>
+            <div class="flavour-meta">
+              <span>🍩 3‑stack tower</span>
+              <span>≈ 520–580 kcal • 7–9 g protein</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹299</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('melt');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('melt');return false;">Add Triple Cocoa Melt</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 8 Cloud Cube -->
+        <article class="flavour-card" data-id="cloud">
+          <div class="story-video-wrap">
+            <video src="8.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Marshmallow splash</div>
+            <h3 class="flavour-name">Cloud <span>Cube</span></h3>
+            <p class="flavour-desc">
+              Soft marshmallow cube dropped into a dramatic caramel splash with colourful sprinkles around it.
+            </p>
+            <div class="flavour-meta">
+              <span>🍮 Dessert shot</span>
+              <span>Perfect for reels • ≈ 260–300 kcal</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹279</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('cloud');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('cloud');return false;">Add Cloud Cube</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 9 Crystal Love Bites -->
+        <article class="flavour-card" data-id="love">
+          <div class="story-video-wrap">
+            <video src="9.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div style="margin-top:0.75rem;">
+            <div class="flavour-tag">Heart bites</div>
+            <h3 class="flavour-name">Crystal <span>Love Bites</span></h3>
+            <p class="flavour-desc">
+              Crispy heart‑shaped pastry layers coated with shimmering sugar crystals – snackable little dessert bites.
+            </p>
+            <div class="flavour-meta">
+              <span>🍪 6–8 bite pieces</span>
+              <span>Shareable dessert • ≈ 280–320 kcal</span>
+            </div>
+          </div>
+          <div class="flavour-footer">
+            <span class="flavour-price">₹249</span>
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn-buy-small" onclick="quickBuy('love');return false;">Buy now</button>
+              <button class="btn-add" onclick="addToCart('love');return false;">Add Crystal Love Bites</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIVERY DETAILS -->
+  <section id="details">
+    <div class="container">
+      <header class="section-header">
+        <div class="section-eyebrow">Delivery details</div>
+        <h2 class="section-title">Tell us where to deliver</h2>
+        <p class="section-sub">
+          After you tap Buy Now in your bucket, we show a final confirmation and then open WhatsApp with all your order details.
+        </p>
+      </header>
+
+      <form id="detailsForm" class="order-form">
+        <div class="form-row">
+          <label>Full name</label>
+          <input type="text" name="name" required placeholder="Your name" />
+        </div>
+        <div class="form-row">
+          <label>Mobile / WhatsApp number</label>
+          <input type="tel" name="phone" required placeholder="+91‑XXXXXXXXXX" />
+        </div>
+        <div class="form-row">
+          <label>Address</label>
+          <textarea name="address" required placeholder="House no, street, area, landmark"></textarea>
+        </div>
+        <div class="form-row">
+          <label>City / Location</label>
+          <input type="text" name="city" required placeholder="Jalna, Maharashtra" />
+        </div>
+        <div class="form-row">
+          <label>Payment method</label>
+          <select name="payment" required>
+            <option value="">Select</option>
+            <option value="Cash on Delivery">Cash on Delivery</option>
+            <option value="UPI on Delivery">UPI on Delivery</option>
+          </select>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 Midnight Scoop Ice Cream • Crafted with love in Jalna, Maharashtra.
+</footer>
+
+<!-- FLOATING CART -->
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <strong>Your bucket</strong>
+    <span id="cartSmallCount">0 items</span>
+  </div>
+  <div class="cart-items" id="cartItems">
+    No products added yet.
+  </div>
+  <div class="cart-total">
+    <span>Total amount</span>
+    <strong id="cartTotal">₹0</strong>
+  </div>
+  <div class="cart-actions">
+    <button class="cart-clear" type="button" onclick="closeCart()">Cancel</button>
+    <button class="cart-clear" type="button" onclick="clearAllData()">Clear all</button>
+    <button class="cart-buy" type="button" onclick="checkout()">Buy Now</button>
+  </div>
+  <p class="cart-note">
+    Buy Now opens a confirmation popup and then a WhatsApp chat with your full order.
+  </p>
+</div>
+
+<script>
+  const WHATSAPP_BASE = "https://wa.me/919112396973?text=";
+
+  const PRODUCTS = {
+    royal:  { name: "Royal Cocoa Shake",      price: 259 },
+    velvet: { name: "Chocolate Velvet",       price: 229 },
+    bliss:  { name: "Triple Cocoa Bliss",     price: 289 },
+    overload: { name: "Cocoa Overload",       price: 249 },
+    "velvet-pour": { name: "Chocolate Velvet Pour", price: 229 },
+    black:  { name: "Black Velvet Swirl",     price: 189 },
+    melt:   { name: "Triple Cocoa Melt",      price: 299 },
+    cloud:  { name: "Cloud Cube",             price: 279 },
+    love:   { name: "Crystal Love Bites",     price: 249 }
+  };
+
+  const cart = {};
+  const cartPanel = document.getElementById("cartPanel");
+  const cartItemsEl = document.getElementById("cartItems");
+  const cartTotalEl = document.getElementById("cartTotal");
+  const cartCountEl = document.getElementById("cartCount");
+  const cartSmallCountEl = document.getElementById("cartSmallCount");
+  const cartToggle = document.getElementById("cartToggle");
+  const detailsForm = document.getElementById("detailsForm");
+
+  function scrollToFlavours() {
+    const sec = document.getElementById("flavours");
+    if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showToast(message) {
+    let bar = document.getElementById("toastBar");
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "toastBar";
+      bar.style.position = "fixed";
+      bar.style.top = "16px";
+      bar.style.left = "50%";
+      bar.style.transform = "translateX(-50%)";
+      bar.style.background = "rgba(5,7,15,0.98)";
+      bar.style.border = "1px solid rgba(0,255,224,0.6)";
+      bar.style.borderRadius = "999px";
+      bar.style.padding = "8px 16px";
+      bar.style.fontSize = "13px";
+      bar.style.display = "flex";
+      bar.style.alignItems = "center";
+      bar.style.gap = "10px";
+      bar.style.color = "#e5e7eb";
+      bar.style.zIndex = "80";
+      const span = document.createElement("span");
+      span.id = "toastText";
+      const btn = document.createElement("button");
+      btn.textContent = "Close";
+      btn.style.border = "none";
+      btn.style.background = "transparent";
+      btn.style.color = "#9ca3af";
+      btn.style.cursor = "pointer";
+      btn.onclick = () => (bar.style.display = "none");
+      bar.appendChild(span);
+      bar.appendChild(btn);
+      document.body.appendChild(bar);
+    }
+    document.getElementById("toastText").textContent = message;
+    bar.style.display = "flex";
+  }
+
+  function updateCartUI() {
+    const ids = Object.keys(cart).filter(id => cart[id] > 0);
+    let total = 0;
+
+    if (!ids.length) {
+      cartItemsEl.textContent = "No products added yet.";
+      cartTotalEl.textContent = "₹0";
+      cartCountEl.textContent = "0";
+      cartSmallCountEl.textContent = "0 items";
+      cartPanel.style.display = "none";
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+
+    ids.forEach(id => {
+      const item = PRODUCTS[id];
+      const qty = cart[id];
+      const lineTotal = qty * item.price;
+      total += lineTotal;
+
+      const row = document.createElement("div");
+      row.className = "cart-line";
+      row.innerHTML = `
+        <span>${item.name}</span>
+        <span style="display:flex;align-items:center;gap:4px;">
+          <button type="button"
+            style="width:22px;height:22px;border-radius:999px;border:1px solid rgba(255,255,255,0.4);background:transparent;color:#fff;font-size:14px;cursor:pointer;"
+            onclick="changeQty('${id}', -1)">-</button>
+          <span>${qty}</span>
+          <button type="button"
+            style="width:22px;height:22px;border-radius:999px;border:1px solid rgba(0,255,224,0.7);background:rgba(0,255,224,0.15);color:#00ffe0;font-size:14px;cursor:pointer;"
+            onclick="changeQty('${id}', 1)">+</button>
+          <span style="margin-left:6px;">₹${lineTotal}</span>
+        </span>
+      `;
+      frag.appendChild(row);
+    });
+
+    cartItemsEl.innerHTML = "";
+    cartItemsEl.appendChild(frag);
+    cartTotalEl.textContent = "₹" + total;
+
+    const totalQty = ids.reduce((sum, id) => sum + cart[id], 0);
+    cartCountEl.textContent = String(totalQty);
+    cartSmallCountEl.textContent = `${totalQty} items`;
+
+    cartPanel.style.display = "block";
+  }
+
+  window.changeQty = function(id, delta) {
+    if (!PRODUCTS[id]) return;
+    const current = cart[id] || 0;
+    const next = current + delta;
+    cart[id] = next < 0 ? 0 : next;
+    updateCartUI();
+  };
+
+  window.addToCart = function(id) {
+    changeQty(id, 1);
+  };
+
+  window.quickBuy = function(id) {
+    addToCart(id);
+    cartPanel.style.display = "block";
+  };
+
+  window.closeCart = function () {
+    if (cartPanel) cartPanel.style.display = "none";
+  };
+
+  window.clearAllData = function() {
+    if (detailsForm) detailsForm.reset();
+    Object.keys(cart).forEach(id => delete cart[id]);
+    updateCartUI();
+  };
+
+  if (cartToggle) {
+    cartToggle.addEventListener("click", () => {
+      if (cartPanel.style.display === "none" || !cartPanel.style.display) {
+        if (Object.keys(cart).length) cartPanel.style.display = "block";
+      } else {
+        cartPanel.style.display = "none";
+      }
+    });
+  }
+
+  function openConfirmModal(summaryText, onOk, onCancel) {
+    let overlay = document.getElementById("confirmOverlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "confirmOverlay";
+      overlay.style.position = "fixed";
+      overlay.style.inset = "0";
+      overlay.style.background = "rgba(0,0,0,0.6)";
+      overlay.style.display = "flex";
+      overlay.style.alignItems = "center";
+      overlay.style.justifyContent = "center";
+      overlay.style.zIndex = "70";
+
+      const box = document.createElement("div");
+      box.id = "confirmBox";
+      box.style.maxWidth = "420px";
+      box.style.width = "90%";
+      box.style.background = "rgba(5,7,15,0.98)";
+      box.style.borderRadius = "18px";
+      box.style.border = "1px solid rgba(255,255,255,0.18)";
+      box.style.boxShadow = "0 20px 60px rgba(0,0,0,0.9)";
+      box.style.padding = "16px 16px 12px";
+      box.style.fontSize = "13px";
+      box.style.color = "#e5e7eb";
+
+      const title = document.createElement("h3");
+      title.textContent = "Confirm your order";
+      title.style.fontSize = "15px";
+      title.style.marginBottom = "6px";
+
+      const text = document.createElement("pre");
+      text.id = "confirmText";
+      text.style.whiteSpace = "pre-wrap";
+      text.style.fontFamily = "inherit";
+      text.style.fontSize = "12px";
+      text.style.color = "#9ca3af";
+      text.style.marginBottom = "10px";
+
+      const row = document.createElement("div");
+      row.style.display = "flex";
+      row.style.justifyContent = "flex-end";
+      row.style.gap = "8px";
+
+      const btnChange = document.createElement("button");
+      btnChange.textContent = "Change details";
+      btnChange.style.borderRadius = "999px";
+      btnChange.style.border = "1px solid rgba(255,255,255,0.3)";
+      btnChange.style.background = "transparent";
+      btnChange.style.color = "#e5e7eb";
+      btnChange.style.padding = "6px 12px";
+      btnChange.style.fontSize = "12px";
+      btnChange.style.cursor = "pointer";
+
+      const btnOk = document.createElement("button");
+      btnOk.textContent = "Confirm & send to WhatsApp";
+      btnOk.style.borderRadius = "999px";
+      btnOk.style.border = "none";
+      btnOk.style.background = "#00ffe0";
+      btnOk.style.color = "#020617";
+      btnOk.style.padding = "6px 12px";
+      btnOk.style.fontSize = "12px";
+      btnOk.style.fontWeight = "600";
+      btnOk.style.cursor = "pointer";
+
+      row.appendChild(btnChange);
+      row.appendChild(btnOk);
+
+      box.appendChild(title);
+      box.appendChild(text);
+      box.appendChild(row);
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+    }
+    document.getElementById("confirmText").textContent = summaryText;
+    overlay.style.display = "flex";
+
+    const btns = overlay.querySelectorAll("button");
+    const btnChange = btns[0];
+    const btnOk = btns[1];
+
+    btnChange.onclick = () => {
+      overlay.style.display = "none";
+      if (onCancel) onCancel();
+    };
+    btnOk.onclick = () => {
+      overlay.style.display = "none";
+      if (onOk) onOk();
+    };
+  }
+
+  window.checkout = function() {
+    const ids = Object.keys(cart).filter(id => cart[id] > 0);
+    if (!ids.length) {
+      alert("Please add at least one product to your bucket.");
+      return;
+    }
+
+    const detailsSec = document.getElementById("details");
+    if (detailsSec) {
+      detailsSec.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    const formData = new FormData(detailsForm);
+    const name = (formData.get("name") || "").trim();
+    const phone = (formData.get("phone") || "").trim();
+    const address = (formData.get("address") || "").trim();
+    const city = (formData.get("city") || "").trim();
+    const payment = (formData.get("payment") || "").trim();
+
+    if (!name || !phone || !address || !city || !payment) {
+      alert("Fill your name, mobile, address, city and payment method, then press Buy Now again.");
+      return;
+    }
+
+    let total = 0;
+    const numberedLines = [];
+    ids.forEach((id, index) => {
+      const item = PRODUCTS[id];
+      const qty = cart[id];
+      const lineTotal = qty * item.price;
+      total += lineTotal;
+      const num = index + 1;
+      numberedLines.push(`${num}) ${qty} × ${item.name} (₹${item.price})`);
+    });
+
+    const itemsBlockPlain = numberedLines.join("\n");
+
+    const payText =
+      payment === "Cash on Delivery"
+        ? "Payment: Cash on delivery (COD)."
+        : "Payment: UPI on delivery (QR / UPI ID).";
+
+    const summary =
+      `Items:\n${itemsBlockPlain}\n\n` +
+      `Total (approx): ₹${total}\n\n` +
+      `Name: ${name}\n` +
+      `Phone: ${phone}\n` +
+      `City: ${city}\n` +
+      `Address: ${address}\n` +
+      `${payText}\n\n` +
+      "If everything is correct, click “Confirm & send to WhatsApp”.\n" +
+      "If you want to edit anything, click “Change details”.";
+
+    openConfirmModal(summary, () => {
+      alert(
+        "Payment process:\n\n" +
+        "1) We will contact you on WhatsApp or call to confirm your order.\n" +
+        "2) If you selected UPI, you will get our UPI ID / QR at the time of delivery.\n" +
+        "3) If you selected Cash on Delivery, please keep the amount ready.\n\n" +
+        "Now your order details will open in WhatsApp."
+      );
+
+      const fullMessage =
+        `New order for Midnight Scoop:\n` +
+        `Name: ${name}\n` +
+        `Phone: ${phone}\n` +
+        `City: ${city}\n` +
+        `Address: ${address}\n` +
+        `Items:\n` +
+        itemsBlockPlain +
+        `\nTotal (approx): ₹${total}\n` +
+        `${payText}`;
+
+      const encoded = encodeURIComponent(fullMessage); // URL-safe for WhatsApp [web:193][web:190][web:202]
+
+      window.open(WHATSAPP_BASE + encoded, "_blank");
+      showToast("Order sent to WhatsApp. Please check your WhatsApp chat.");
+    });
+  };
+</script>
+</body>
+</html>
