@@ -712,6 +712,34 @@
 </div>
 
 <script>
+/*********************************
+ * Added by WebDevPraveen (WDP)
+ * Purpose:
+ * - Admin-style config
+ * - Persistent cart helpers
+ **********************************/
+
+const SHOP_CONFIG = {
+  minOrderValue: 199,   // minimum order value for checkout
+  deliveryEnabled: true,
+  deliveryCharge: 30,
+  packingCharge: 20
+};
+
+
+const WDP_CART_KEY = "midnight_scoop_cart_v1";
+
+function wdpSaveCart(cartObj) {
+  localStorage.setItem(WDP_CART_KEY, JSON.stringify(cartObj));
+}
+
+function wdpLoadCart() {
+  const raw = localStorage.getItem(WDP_CART_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+</script>
+
+<script>
   const WHATSAPP_BASE = "https://wa.me/919112396973?text=";
 
   const PRODUCTS = {
@@ -727,6 +755,7 @@
   };
 
   const cart = {};
+  Object.assign(cart, wdpLoadCart()); // WDP: restore saved cart
   const cartPanel = document.getElementById("cartPanel");
   const cartItemsEl = document.getElementById("cartItems");
   const cartTotalEl = document.getElementById("cartTotal");
@@ -774,11 +803,12 @@
     }
     document.getElementById("toastText").textContent = message;
     bar.style.display = "flex";
-  }
+  }  
 
   function updateCartUI() {
     const ids = Object.keys(cart).filter(id => cart[id] > 0);
     let total = 0;
+
 
     if (!ids.length) {
       cartItemsEl.textContent = "No products added yet.";
@@ -788,6 +818,7 @@
       cartPanel.style.display = "none";
       return;
     }
+
 
     const frag = document.createDocumentFragment();
 
@@ -818,19 +849,16 @@
     cartItemsEl.innerHTML = "";
     cartItemsEl.appendChild(frag);
     cartTotalEl.textContent = "₹" + total;
-
-    const totalQty = ids.reduce((sum, id) => sum + cart[id], 0);
-    cartCountEl.textContent = String(totalQty);
-    cartSmallCountEl.textContent = `${totalQty} items`;
+  
+    cartCountEl.textContent = ids.reduce((s, id) => s + cart[id], 0);
+    cartSmallCountEl.textContent = cartCountEl.textContent + " items";
 
     cartPanel.style.display = "block";
+    wdpSaveCart(cart); // WDP
   }
 
-  window.changeQty = function(id, delta) {
-    if (!PRODUCTS[id]) return;
-    const current = cart[id] || 0;
-    const next = current + delta;
-    cart[id] = next < 0 ? 0 : next;
+  window.changeQty = function (id, delta) {
+    cart[id] = Math.max(0, (cart[id] || 0) + delta);
     updateCartUI();
   };
 
@@ -847,13 +875,14 @@
     if (cartPanel) cartPanel.style.display = "none";
   };
 
-  window.clearAllData = function() {
-    if (detailsForm) detailsForm.reset();
+  window.clearAllData = function () {
+    detailsForm.reset();
     Object.keys(cart).forEach(id => delete cart[id]);
+    localStorage.removeItem(WDP_CART_KEY); // WDP
     updateCartUI();
   };
 
-  if (cartToggle) {
+if (cartToggle) {
     cartToggle.addEventListener("click", () => {
       if (cartPanel.style.display === "none" || !cartPanel.style.display) {
         if (Object.keys(cart).length) cartPanel.style.display = "block";
@@ -863,6 +892,7 @@
     });
   }
 
+  
   function openConfirmModal(summaryText, onOk, onCancel) {
     let overlay = document.getElementById("confirmOverlay");
     if (!overlay) {
@@ -960,7 +990,7 @@
       return;
     }
 
-    const detailsSec = document.getElementById("details");
+        const detailsSec = document.getElementById("details");
     if (detailsSec) {
       detailsSec.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -987,6 +1017,12 @@
       const num = index + 1;
       numberedLines.push(`${num}) ${qty} × ${item.name} (₹${item.price})`);
     });
+
+  // Minimum order check 
+  if (total < SHOP_CONFIG.minOrderValue) {
+    alert(`Minimum order value is ₹${SHOP_CONFIG.minOrderValue}`);
+    return;
+  } //min order check end
 
     const itemsBlockPlain = numberedLines.join("\n");
 
@@ -1031,7 +1067,9 @@
       window.open(WHATSAPP_BASE + encoded, "_blank");
       showToast("Order sent to WhatsApp. Please check your WhatsApp chat.");
     });
-  };
+ };
+
+updateCartUI(); // initial render
 </script>
 </body>
 </html>
